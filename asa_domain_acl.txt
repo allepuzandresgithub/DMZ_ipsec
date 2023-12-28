@@ -1,0 +1,13 @@
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 135
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 464
+f1(config)#access-list dmz_acl permit udp host any host 192.168.200.1 eq 464
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 389
+f1(config)#access-list dmz_acl permit udp host any host 192.168.200.1 eq 389
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 636
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 3268
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 3269
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 53
+f1(config)#access-list dmz_acl permit udp host any host 192.168.200.1 eq 53
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 88
+f1(config)#access-list dmz_acl permit udp host any host 192.168.200.1 eq 88
+f1(config)#access-list dmz_acl permit tcp host any host 192.168.200.1 eq 445

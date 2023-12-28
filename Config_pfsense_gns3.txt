@@ -1,0 +1,47 @@
+daVMnet9 <=> NAT(card)
+	NAT: 172.16.69.0/24
+	GW: 172.16.69.1
+
+// CONFIG ROUTER R1
+
+int g0/0
+ip add 192.168.147.9 255.255.255.0
+no sh
+exit
+
+int g0/1
+ip add 10.10.10.1 255.255.255.0
+no sh
+exit
+
+do wr
+
+//config pfsense
+WAN --> 10.10.10.2/24
+GW: 10.10.10.1
+ 
+LAN --> 192.168.19.1
+GW: none
+#Set DHCP on
+
+#Disable NAT outbound
+#ping to 192.168.19.1 from R1
+(NOt sucess do routing)
+
+//Routing
+ip route 192.168.19.0 255.255.255.0 10.10.10.2
+
+//Default route
+ip route 0.0.0.0 0.0.0.0 192.168.147.1
+
+do wr
+
+#ping to 192.168.19.1 from R1
+(Not sucess disable <block traffic default rules in WAN>)
+
+#Ping to PC1 (enable ICMP)
+#From PC1 ping to 8.8.8.8 sucess.
+
+(Si queremos acceder a pfsense desde Anfitrión)
+#En localhost:
+route add 10.10.10.0 mask 255.255.255.0 192.168.147.1

@@ -1,0 +1,49 @@
+
+access-list OUTSIDE_IN extended permit ip any any
+access-group OUTSIDE_IN in interface outside
+
+packet-tracer input outside tcp 192.168.200.1 443 195.1.1.130 1234
+
+-----------------------------------------------------------------------------
+int g0/0
+ip address 10.1.1.1 255.255.255.0
+nameif outside
+security-level 0
+
+int g0/1
+ip address 172.16.1.1 255.255.255.0
+nameif inside
+security-level 100
+
+int g0/2
+ip address 192.168.200.1 255.255.255.0
+nameif DMZ
+security-level 0 (no security-level)
+
+object network dmz-to-inside
+host 192.168.200.254
+nat (dmz,inside) static interface service tcp 80 80
+object network dmz-to-outside
+host 192.168.200.254
+nat (dmz,outside) static interface service tcp 80 80
+
+sh access-list
+access-list dmz_acl permit tcp any host 192.168.200.254 eq 80
+access-group dmz_acl in interface outside
+
+packet-tracer input outside tcp 10.1.1.10 http 192.168.200.254 http
+#Denied by NAT
+object network dmz_to_outside
+nat (outside,dmz) static insterface service tcp 80 80
+
+
+----------------------------------------------------------------------------
+same-security-traffic permit inter-interface
+---------------------------------------------------------------------------
+#Allow ICMP in inside
+policy-map global_policy
+ class inspection_default
+  inspect icmp
+  exit
+ exit
+access-list from_outside extended permit icmp any any echo

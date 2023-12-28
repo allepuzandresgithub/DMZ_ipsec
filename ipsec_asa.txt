@@ -1,0 +1,53 @@
+hostname site-A
+crypto ikev1 enable outside
+crypto ikev1 policy 2
+encryption aes
+hash sha
+group 2
+authentication pre-share
+lifetime 86400
+exit
+tunnel-group 4.2.2.2 type ipsec-121
+tunnel-group 4.2.2.2 ipsec-attributes
+pre
+ike
+ikev1 pre-shared-key cisco123
+exit
+access-1
+access-list 1 extended permit ip 150.1.1.0 255.255.255.0 160.1.1.0 255.255.255.0
+crypto ipsec ikev1 transform-set ipsec-vpn esp-aes esp-sha-hmac
+crypto map site-a 10 match address 1
+crypto map site-a 10 set peer 4.2.2.2
+crypto map site-a 10 set ikev1 transform-set ipsec-vpn
+crypto map site-a 10 set pfs
+crypto map site-a 10 interface outside
+###wr
+
+hostname site-B
+crypto ikev1 enable outside
+crypto ikev1 policy 2
+encryption aes
+hash sha
+group 2
+authentication pre-share
+lifetime 86400
+exit
+tunnel-group 4.2.2.1 type ipsec-121
+tunnel-group 4.2.2.1 ipsec-attributes
+pre
+ike
+ikev1 pre-shared-key cisco123
+exit
+access-1
+access-list 1 extended permit ip 160.1.1.0 255.255.255.0 160.1.1.0 255.255.255.0
+crypto ipsec ikev1 transform-set ipsec-vpn esp-aes esp-sha-hmac
+crypto map site-b 10 match address 1
+crypto map site-b 10 set peer 4.2.2.1
+crypto map site-b 10 set ikev1 transform-set ipsec-vpn
+crypto map site-b 10 set pfs
+crypto map site-b 10 interface outside
+###wr
+
+show crypto ikev1 sa
+show crypto ipsec sa
+

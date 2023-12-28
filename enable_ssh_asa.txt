@@ -1,0 +1,10 @@
+ASA-5505# conf t
+ASA-5505 (config)# enable password password_here encrypted
+ASA-5505 (config)# username user_here password password_here encrypted privilege 15
+ASA-5505 (config)# aaa authentication ssh console LOCAL
+ASA-5505 (config)# ssh 192.168.0.10 255.255.255.0 inside
+! Obviously, you can add/change IPs that you want to allow SSH from.
+ASA-5505 (config)# domain-name networkjutsu.com
+ASA-5505 (config)# crypto key gen rsa mod 4096
+ASA-5505 (config)# ssh version 2
+ASA-5505 (config)# ssh key-exchange group dh-group14-sha1

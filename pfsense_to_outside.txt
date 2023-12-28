@@ -1,0 +1,42 @@
+vmnet0 --> NAT(vmware)
+NET: 172.16.69.0/24
+GW: 172.16.69.1
+
+#Configure R1
+
+Router(config-if)#int g0/0
+Router(config-if)#ip address 10.10.10.1 255.255.255.0
+Router(config-if)#no sh
+Router(config-if)#int g0/1
+Router(config-if)#ip address 172.16.69.9 255.255.255.0
+Router(config-if)#no sh
+Router(config-if)#exit
+Router(config)#exit
+Router#sh ip int brief
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         10.10.10.1      YES manual up                    up
+GigabitEthernet0/1         172.16.69.9     YES manual up                    up
+GigabitEthernet0/2         unassigned      YES unset  administratively down down
+GigabitEthernet0/3         unassigned      YES unset  administratively down down
+Router#ping 10.10.10.2
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.10.10.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 2/2/5 ms
+
+#Create routing on R1
+ip route 192.168.19.0 255.255.255.0 10.10.10.2
+
+#Allow ping to outside
+ip route 0.0.0.0 0.0.0.0 172.16.69.1
+
+#Disable NAT outbound on pfsense
+//pfsense NAT options
+
+
+Conclusión.
+#Tenemos conexión hacia localhost y por lo tanto a 8.8.8.8
+#Añadiendo una ruta en widnows podemos acceder a pfsense desde localhost.
+
+C:\Windows\system32>route add 192.168.19.0 mask 255.255.255.0 172.16.69.1
+Correcto                                                                                                                                                                                                                                     C:\Windows\system32>ping 192.168.19.1                                                                                                                                                                                                         Haciendo ping a 192.168.19.1 con 32 bytes de datos:                                                                    Respuesta desde 172.16.69.1: Host de destino inaccesible.                                                              Tiempo de espera agotado para esta solicitud.                                                                                                                                                    

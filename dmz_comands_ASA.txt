@@ -1,0 +1,21 @@
+ASA:
+
+object network LOCAL_net
+subnet 172.16.1.0 255.255.255.0 
+nat(dmz,inside) static interface service tcp 80 80
+sh run object
+nat(dmz,inside) static interface service tcp 
+sh run nat
+object network dmz
+exit
+sh run object
+#no object network LOCAL_net
+#no object network dmz
+object network DMZ_TO_INSIDE
+host 192.168.200.254
+sh run object
+nat (DMZ,INSIDE) static interface service tcp 80 80
+object network DMZ_TO_OUTSIDE
+host 192.168.200.254
+
+access-list DMZ_ACL permit tcp any host 192.168.200.254 eq 80

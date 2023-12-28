@@ -1,0 +1,7 @@
+ciscoasa(config)# username alle password alle privilege 15
+ciscoasa(config)# aaa authentication http console LOCAL
+ciscoasa(config)# http server enable
+ciscoasa(config)# http 195.1.1.129 255.255.255.252 outside
+ciscoasa(config)# http 0.0.0.0 0.0.0.0 outside
+
+

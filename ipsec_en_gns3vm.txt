@@ -1,0 +1,101 @@
+R1
+configt
+int g0/1
+ip address 192.168.1.1 255.255.255.255.252
+no sh
+
+R2
+config t
+hostname INTERNET
+int g0/1
+ip address 192.168.1.2 255.255.255.252
+no sh
+exit
+interfce g0/2
+ip address 192.168.2.2 255.255.255.252
+no sh
+exit
+do wr
+
+R3
+config t
+interface g0/2
+ip address 192.168.2.1 255.255.255.252
+no sh
+exit
+do ping 192.168.2.2
+interface l1
+ip address 192.168.20.1 255.255.255.0
+exit
+ip route 0.0.0.0 0.0.0.0 192.168.2.2
+exit
+ping 192.168.1.2
+
+R1
+int l1
+ip address 192.168.10.1 255.255.255.0
+exit
+ip route 0.0.0.0 0.0.0.0 192.168.1.2
+exit
+ping 192.168.2.1
+config t
+crypto isakmp policy 10
+encryption des
+hash md5
+group 2
+authentication pre-share
+lifetime 86400
+exit
+crypto ipsec transform-set MYSET esp-des esp-md5-hmac
+exit
+crypto isakmp peer address 192.168.2.1
+set cli
+set agressive-mode client-endopint ipv4-address 192.168.2.1
+set aggressive-mode password 1234567890
+exit
+ip access-list extended VPN 
+permit ip 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+exit
+crypto map MYMAP 10 ipsec-isakmp
+set peer 192.168.2.1
+match address VPN 
+set transform-set MYSET 
+exit
+int g0/1
+crypto map MYMAP
+en
+exit
+do wr
+
+R3
+configure t
+crypto isakmp policy 10
+encryption des
+hash md5
+group 2
+authentication pre-share
+lifetime 86400
+exit
+crypto ipsec transform-set MYSET esp-des esp-md5-hmac
+crypto isakmp peer address 192.168.1.1
+set aggressive-mode client-endopint ipv4-address 192.168.1.1
+set aggressive-mode password 1234567890
+exit
+ip access-list extended VPN
+permit ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+exit
+crypto map MYMAP 10 ipsec-isakmp
+set peer 192.168.1.1
+match address VPN
+set transform-set MYSET
+exit
+int g0/2
+crypto map MYMAP
+exit
+show crypto isakmp sa
+ping 192.168.10.1 source 192.168.20.1
+show crypto isakmp sa
+
+#Commandos para comprobar el estado
+show 
+
